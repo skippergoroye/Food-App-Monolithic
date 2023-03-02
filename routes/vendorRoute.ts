@@ -1,7 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 
 
+
 const router = express.Router()
 
 
-export { router as vendorRoute }
+
+router.get('/', (req: Request, res: Response, next: NextFunction)=> {
+    res.json({ message: "Hello from Vendor" })
+})
+
+
+export { router as VendorRoute }
