@@ -1,9 +1,15 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+
+
+
 import { AdminRoute, VendorRoute, HomeRoute } from './routes'
+import { connectDB } from './config/index'
 
 
 const app = express();
+
+connectDB()
 
 
 app.use(bodyParser.json())
@@ -16,6 +22,9 @@ app.use(bodyParser.urlencoded({ extended: true}))
 app.use('/', HomeRoute)
 app.use('/admin', AdminRoute)
 app.use('/vendor', VendorRoute)
+
+
+
 
 
 

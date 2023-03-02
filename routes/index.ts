@@ -1,3 +1,3 @@
 export * from './AdminRoute';
-export * from './vendorRoute';
+export * from './VendorRoute';
 export * from './HomeRoute';
