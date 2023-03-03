@@ -8,3 +8,9 @@ export interface CreateVendorInput {
     email: string,
     password: string,
 }
+
+
+export interface vendorLoginInputs {
+    email: string,
+    password: string,
+}
