@@ -21,8 +21,11 @@ export const vendorLogin = async( req: Request, res: Response, next: NextFunctio
                 foodTypes: existingVendor.foodType,
                 name: existingVendor.name,
             })
-            return res.json(signature)
-            
+            return res.json({
+                message: "Login Successful",
+                signature
+            })
+
         } else { 
             return res.json({ "message": "password is not valid"})
         }
@@ -33,6 +36,13 @@ export const vendorLogin = async( req: Request, res: Response, next: NextFunctio
 
 
 export const GetVendorProfile =  async(req: Request, res: Response, next: NextFunction) => {
+
+    const user = req.user;
+
+    if(user){
+        
+    }
+
      
 
 }
