@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { vendorLoginInputs } from '../dto';
 import { Vendor } from "../models";
 import { ValidatePassword } from '../utility';
+import { GenerateSignature } from '../utility/PasswordUtility';
 
 export const vendorLogin = async( req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <vendorLoginInputs>req.body;
@@ -14,7 +15,14 @@ export const vendorLogin = async( req: Request, res: Response, next: NextFunctio
         const validation = await ValidatePassword(password, existingVendor.password, existingVendor.salt)
 
         if(validation) {
-            return res.json(existingVendor)
+            const signature = GenerateSignature({
+                _id: existingVendor.id,
+                email: existingVendor.email,
+                foodTypes: existingVendor.foodType,
+                name: existingVendor.name,
+            })
+            return res.json(signature)
+            
         } else { 
             return res.json({ "message": "password is not valid"})
         }

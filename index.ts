@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 
 
 import { AdminRoute, VendorRoute, HomeRoute } from './routes'
-import { connectDB } from './config/index'
+import { connectDB } from './config/database'
 
 
 const app = express();
