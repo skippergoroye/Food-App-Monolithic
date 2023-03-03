@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-interface vendorDoc extends Document {
+interface VendorDoc extends Document {
     name: string,
     ownerName: string,
     foodType: [string],
@@ -13,7 +13,7 @@ interface vendorDoc extends Document {
     serviceAvailable: boolean,
     coverImages: [string];
     rating: number;
-    // foods: any
+    foods: any
 }
 
 
@@ -61,10 +61,10 @@ const vendorSchema = new Schema({
     rating: {
         type: Number,
     },
-    // foods: [{
-    //     type: mongoose.SchemaTypes.ObjectId,
-    //     ref: 'food'
-    // }]
+    foods: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'food'
+    }]
 },{
    toJSON: {
       transform(doc, ret){
@@ -79,6 +79,6 @@ const vendorSchema = new Schema({
 });
 
 
-const Vendor = mongoose.model<vendorDoc>('vendor', vendorSchema)
+const Vendor = mongoose.model<VendorDoc>('vendor', vendorSchema)
 
 export { Vendor }

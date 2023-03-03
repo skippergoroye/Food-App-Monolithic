@@ -1,3 +1,5 @@
+import { StringMappingType } from "typescript";
+
 export interface CreateVendorInput {
     name: string,
     ownerName: string,
@@ -7,6 +9,15 @@ export interface CreateVendorInput {
     phone: string,
     email: string,
     password: string,
+}
+
+
+
+export interface EditVendorInput {
+    name: string;
+    address: string;
+    phone: string;
+    foodTypes: [string];
 }
 
 

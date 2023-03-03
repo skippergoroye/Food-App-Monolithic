@@ -1,8 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { vendorLoginInputs } from '../dto';
-import { Vendor } from "../models";
+import { EditVendorInput, vendorLoginInputs } from '../dto';
+import { CreateFoodInputs } from '../dto/Food.dto';
+import { Food, Vendor } from "../models";
 import { ValidatePassword } from '../utility';
 import { GenerateSignature } from '../utility/PasswordUtility';
+import { FindVendor } from './AdminController';
+
+
+
+
 
 export const vendorLogin = async( req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <vendorLoginInputs>req.body;
@@ -40,18 +46,122 @@ export const GetVendorProfile =  async(req: Request, res: Response, next: NextFu
     const user = req.user;
 
     if(user){
-        
+        const existingVendor = await FindVendor(user._id)
+
+        return res.json(existingVendor)
     }
 
-     
-
+    return res.json({"message": "Vendor information not found"})
 }
 
-export const UpdateVendorProfile =  async(req: Request, res: Response, next: NextFunction) => {
-    
+
+
+
+
+
+export const UpdateVendorProfile =  async (req: Request, res: Response, next: NextFunction) => {
+
+    const { foodTypes, name, address, phone } = <EditVendorInput>req.body;
+
+    const user = req.user;
+
+
+    if(user){
+         // Check if vendor Already Exist
+         const existingVendor = await Vendor.findById(user._id)
+
+        //  const existingVendor = await FindVendor(user._id)
+
+        if(existingVendor !== null){
+            existingVendor.name = name;
+            existingVendor.address = address;
+            existingVendor.phone = phone;
+            existingVendor.foodType = foodTypes
+
+            const savedResult = await existingVendor.save()
+            return res.json(savedResult)
+        }
+
+        return res.json(existingVendor)
+    }
+    return res.json({ "message": "Vendor information Not found" })
 }
 
 
 export const UpdateVendorService =  async(req: Request, res: Response, next: NextFunction) => {
+    const user = req.user
+
+    if(user){
+        const existingVendor = await Vendor.findById(user._id)
+
+        if(existingVendor !== null){
+            existingVendor.serviceAvailable = !existingVendor?.serviceAvailable
+            const savedResult = await existingVendor.save()
+            return res.json(savedResult)
+        }
+        return res.json(existingVendor)
+    }
+    return res.json({ "message": "Vendor Information Not found"})
     
 }
+
+
+
+export const AddFood =  async(req: Request, res: Response, next: NextFunction) => {
+
+    const user = req.user
+
+    if(user){
+        const { name, description, category, foodType, readyTime, price } = <CreateFoodInputs>req.body;
+
+         // Check if vendor Already Exist
+         // const existingVendor = await FindVendor(user._id)
+         const vendor = await Vendor.findById(user._id)
+
+         if(vendor !== null){
+            const createdFood = await Food.create({
+                vendorId: vendor._id,
+                name: name,
+                description: description,
+                category: category,
+                foodType: foodType,
+                images: ['mock.jpg'],
+                readyTime: readyTime,
+                price: price,
+                rating: 0
+            })
+
+            vendor.foods.push(createdFood)
+            const result = await vendor.save()
+            return res.json(result)
+        }
+    }
+
+    return res.json({ "message": "Something went wrong with add food"})   
+}
+
+
+
+
+
+
+
+
+export const GetFoods =  async(req: Request, res: Response, next: NextFunction) => {
+    const user = req.user
+
+    if(user){
+        const foods = await Food.find({ vendorId: user._id })
+
+        if(foods !== null){
+            return res.json(foods)
+        }
+
+    }
+    
+    return res.json({ "message": "Foods information Not Found"})
+    
+}
+
+
+
