@@ -1,36 +1,20 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import path from 'path'
+import express from 'express'
+import App from './services/ExpressApp'
+import connectDB  from './services/Database'
 
 
+const StartServer = async () => {
+    const app = express()
 
-import { AdminRoute, VendorRoute, HomeRoute } from './routes'
-import { connectDB } from './config/database'
-
-
-const app = express();
-
-connectDB()
+    await connectDB()
 
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true}))
-app.use('/images', express.static(path.join(__dirname, 'images')))
+    await App(app)
 
 
+    app.listen(8000, () => {
+        console.log('Listening on port 8000')
+    })
+}
 
-
-// Middleware
-app.use('/', HomeRoute)
-app.use('/admin', AdminRoute)
-app.use('/vendor', VendorRoute)
-
-
-
-
-
-
-
-app.listen(8000, () => {
-    console.log('App is listening on the port 8000')
-})
+StartServer()
