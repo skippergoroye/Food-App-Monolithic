@@ -88,6 +88,40 @@ export const UpdateVendorProfile =  async (req: Request, res: Response, next: Ne
 }
 
 
+
+
+export const UpdateVendorCoverImage =  async (req: Request, res: Response, next: NextFunction) => {
+
+    const user = req.user
+
+    if(user){   
+       
+        // Check if vendor Already Exist
+        // const existingVendor = await FindVendor(user._id)
+        const vendor = await Vendor.findById(user._id)
+
+        if(vendor !== null){
+            // Multer Added
+            const files = req.files as [Express.Multer.File]
+
+            const picture = files.map((file: Express.Multer.File) => file.filename)
+
+            vendor.coverImages.push(...picture)
+
+            const result = await vendor.save()
+            return res.json(result)
+        }
+
+    }
+
+    return res.json({ "message": "Something went wrong with add food"})   
+}
+
+
+
+
+
+
 export const UpdateVendorService =  async(req: Request, res: Response, next: NextFunction) => {
     const user = req.user
 
@@ -114,9 +148,15 @@ export const AddFood =  async(req: Request, res: Response, next: NextFunction) =
     if(user){
         const { name, description, category, foodType, readyTime, price } = <CreateFoodInputs>req.body;
 
+
          // Check if vendor Already Exist
          // const existingVendor = await FindVendor(user._id)
          const vendor = await Vendor.findById(user._id)
+
+         // Multer Added
+         const files = req.files as [Express.Multer.File]
+
+         const picture = files.map((file: Express.Multer.File) => file.filename)
 
          if(vendor !== null){
             const createdFood = await Food.create({
@@ -125,7 +165,7 @@ export const AddFood =  async(req: Request, res: Response, next: NextFunction) =
                 description: description,
                 category: category,
                 foodType: foodType,
-                images: ['mock.jpg'],
+                images: picture,
                 readyTime: readyTime,
                 price: price,
                 rating: 0
